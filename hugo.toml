@@ -11,3 +11,7 @@ authorEmail = "di4urp@gmail.com"  # 可选，用于 RSS feed
 [taxonomies]
 tags = "tags"
 categories = "categories"
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
