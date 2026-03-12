@@ -1,4 +1,13 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Project'
+baseURL = 'di4urp.github.io'
+languageCode = 'zh-cn'
+title = 'Tao'
 theme = 'hugo-texify3'
+
+[params]
+author = "taevas"
+description = "A personal blog built with Hugo"
+authorEmail = "di4urp@gmail.com"  # 可选，用于 RSS feed
+
+[taxonomies]
+tags = "tags"
+categories = "categories"
