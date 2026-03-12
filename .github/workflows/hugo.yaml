@@ -39,6 +39,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Install PostCSS
+        run: npm install -g postcss postcss-cli
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
