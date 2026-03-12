@@ -1,5 +1,6 @@
 +++
 date = 2026-03-12T12:00:00+08:00
+lastmod = 2026-03-12T17:20:00+08:00
 draft = false
 title = '深入理解浏览器反机器人检测原理'
 tags = ['Go', '浏览器自动化', '反爬虫', 'rod']
@@ -79,6 +80,78 @@ iframe.srcdoc = '<script>console.log(navigator.webdriver)</script>';
 └──────────────────────────────────────────┘
 ```
 
+### MustPage 工作流程
+
+`MustPage` 是 `Page` 的包装，遵循 Go 的 `Must` 前缀约定：
+
+```go
+// MustPage 创建无法被检测为机器人的页面
+func MustPage(b *rod.Browser) *rod.Page {
+    p, err := Page(b)
+    if err != nil {
+        panic(err)  // 失败时 panic
+    }
+    return p
+}
+
+// Page 创建页面并注入反检测脚本
+func Page(b *rod.Browser) (*rod.Page, error) {
+    // 1. 创建新的浏览器页面
+    p, err := b.Page(proto.TargetCreateTarget{})
+    if err != nil {
+        return nil, err
+    }
+
+    // 2. 在每个新文档加载前注入 JS
+    _, err = p.EvalOnNewDocument(JS)
+    if err != nil {
+        return nil, err
+    }
+
+    return p, nil
+}
+```
+
+**完整调用链：**
+
+```
+MustPage(browser)
+    │
+    ├── Page(browser)
+    │       │
+    │       ├── b.Page(proto.TargetCreateTarget{})  ← 创建空白页面
+    │       │       │
+    │       │       └── CDP: Target.createTarget
+    │       │
+    │       └── p.EvalOnNewDocument(JS)  ← 注入反检测脚本
+    │               │
+    │               └── CDP: Page.addScriptToEvaluateOnNewDocument
+    │
+    └── 返回 *rod.Page
+```
+
+**时序图：**
+
+```
+用户代码          stealth.Page         rod.Browser         CDP
+   │                  │                    │               │
+   │──── Page() ─────>│                    │               │
+   │                  │                    │               │
+   │                  │── b.Page() ───────>│               │
+   │                  │                    │── createTarget─>│
+   │                  │                    │<── pageId ─────│
+   │                  │<── *Page ──────────│               │
+   │                  │                    │               │
+   │                  │── EvalOnNewDocument ───────────────>│
+   │                  │                    │               │
+   │<── *Page ────────│                    │               │
+   │                  │                    │               │
+   │── Navigate() ────────────────────────────────────────>│
+   │                                      │               │
+   │                        [JS 在页面脚本前执行]          │
+   │                                      │               │
+```
+
 ### 关键技术：EvalOnNewDocument
 
 stealth 的核心只有 34 行 Go 代码，关键在于 `EvalOnNewDocument`：
@@ -101,6 +174,31 @@ func Page(b *rod.Browser) (*rod.Page, error) {
 ```
 
 `EvalOnNewDocument` 是 CDP 的 `Page.addScriptToEvaluateOnNewDocument` 命令封装，确保注入的脚本在任何页面脚本执行前运行。
+
+**执行时机对比：**
+
+| 方法 | 执行时机 | 能否修改原生 API |
+|------|----------|------------------|
+| `page.Eval()` | 页面加载后 | ❌ 太晚，已被检测 |
+| `page.EvalOnNewDocument()` | 页面加载前 | ✅ 优先执行 |
+
+**工作原理：**
+
+1. **注册阶段**：调用 `EvalOnNewDocument(JS)` 时，CDP 将脚本注册到浏览器
+2. **触发时机**：每次导航到新页面或创建新 iframe 时自动执行
+3. **执行顺序**：注入的脚本在页面的 `<script>` 标签之前执行
+
+```
+页面加载时间线：
+─────────────────────────────────────────────────────────>
+     │                    │                    │
+     ▼                    ▼                    ▼
+[EvalOnNewDocument]  [页面 <script>]      [检测脚本]
+     │                    │                    │
+     └── 修改原生 API ────┘                    │
+                          │                    │
+                          └── 检测脚本看到伪装后的 API ──>
+```
 
 ### JavaScript 伪装模块
 
