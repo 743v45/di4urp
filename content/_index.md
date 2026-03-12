@@ -2,6 +2,8 @@
 
 - 个人站点：[github.com/743v45](https://github.com/743v45)
 
+---
+
 ## 项目
 
 - [taevas-plugins](https://github.com/743v45/taevas-plugins) — 自建 Claude Code 插件集合，包含 Hugo 博客发布等工具
