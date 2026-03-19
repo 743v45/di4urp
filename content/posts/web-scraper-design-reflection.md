@@ -51,24 +51,61 @@ console.log(data); // 拿到了
 
 ## Playwright 常用速记
 
+### 启动（带状态保持）
+
 ```typescript
-// 基础
-await page.goto(url);
+// 推荐：launchPersistentContext 保留登录状态和 cookies
+const context = await chromium.launchPersistentContext(
+  '/tmp/playwright-profile',  // 用户数据目录
+  {
+    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    headless: false,           // 显示浏览器窗口
+    slowMo: 500,               // 操作减速，方便观察
+    channel: 'chrome',         // 使用 Chrome 而非 Chromium
+  }
+);
+const page = context.pages()[0] || await context.newPage();
+```
+
+### 基础操作
+
+```typescript
+// 导航
+await page.goto(url, { waitUntil: 'networkidle' });
+
+// 交互
 await page.locator('selector').click();
 await page.locator('input').fill('text');
-const text = await page.locator('.class').textContent();
-
-// 等待
-await page.waitForSelector('.class');
-await page.waitForLoadState('networkidle');
+await page.locator('select').selectOption('value');
 
 // 提取
+const text = await page.locator('.class').textContent();
 const items = await page.locator('.item').allTextContents();
 const html = await page.locator('.container').innerHTML();
 const attr = await page.locator('a').getAttribute('href');
 
+// 等待
+await page.waitForSelector('.class', { state: 'visible' });
+await page.waitForLoadState('networkidle');
+await page.waitForTimeout(1000);  // 固定延迟（不推荐但有时必要）
+
 // 截图调试
 await page.screenshot({ path: 'debug.png', fullPage: true });
+```
+
+### 实用选项
+
+```typescript
+// 设置视口
+await page.setViewportSize({ width: 1920, height: 1080 });
+
+// 拦截请求（屏蔽图片等）
+await page.route('**/*.{png,jpg,jpeg}', route => route.abort());
+
+// 执行自定义脚本
+await page.addInitScript(() => {
+  Object.defineProperty(navigator, 'webdriver', { get: () => false });
+});
 ```
 
 ## 总结
