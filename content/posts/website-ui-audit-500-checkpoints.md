@@ -1,6 +1,6 @@
 +++
 date = '2026-05-06T10:56:00+08:00'
-draft = true
+draft = false
 title = '网站 UI 审美评估：500 个观察维度'
 description = '从字体到动效，从配色到品牌一致性，按优先级排列的网站审美评估完整清单'
 tags = ['design', 'ui', 'audit', 'checklist']

@@ -1,6 +1,6 @@
 +++
 date = '2026-03-17T15:30:00+08:00'
-draft = true
+draft = false
 title = '【思考】Vibe Coding 时代的知识内化与学习方法论'
 description = '如何在大圆（AI）与小圆（人类）协作中拓展个人知识边界：从对话到笔记，从陌生领域到快速入门'
 tags = ['learning', 'ai', 'vibe-coding', 'methodology', 'knowledge']

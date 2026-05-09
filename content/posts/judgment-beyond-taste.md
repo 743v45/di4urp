@@ -1,6 +1,6 @@
 +++
 date = '2026-04-23T02:20:00+08:00'
-draft = true
+draft = false
 title = '过程不可省略，但终点是忘记过程'
 description = '从网页设计的品味谈起：能力、品味、洞察、判断力，以及大般若经与心经之间 600 卷的距离'
 tags = ['design', 'philosophy', 'judgment', 'taste']
