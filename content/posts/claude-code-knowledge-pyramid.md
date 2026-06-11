@@ -21,6 +21,8 @@ Claude Code 不只是"终端里的 ChatGPT"。它是一个完整的 AI 开发平
 
 大多数用户停留在这里。核心是"让 AI 读你的代码、改你的代码、跑你的命令"。
 
+> 推荐阅读：[概述](https://code.claude.com/docs/en/overview)、[CLI 参考](https://code.claude.com/docs/en/cli-reference)、[命令列表](https://code.claude.com/docs/en/commands)
+
 ### 基础交互
 
 | 能力 | 说明 |
@@ -83,6 +85,8 @@ irm https://claude.ai/install.ps1 | iex
 ## 第二层：中级 -- 让 Claude Code 适应你的项目
 
 这一层是日常开发者的高效使用层。核心是"配置你的 Claude Code"。
+
+> 推荐阅读：[设置](https://code.claude.com/docs/en/settings)、[记忆](https://code.claude.com/docs/en/memory)、[权限](https://code.claude.com/docs/en/permissions)
 
 ### CLAUDE.md 配置层级
 
@@ -213,6 +217,8 @@ MEMORY.md 前 200 行 / 25KB 在启动时自动加载。
 ## 第三层：进阶级 -- 扩展 Claude Code 的能力边界
 
 这一层是 Power User 的领域。核心是"给 Claude Code 装上外挂"。
+
+> 推荐阅读：[钩子](https://code.claude.com/docs/en/hooks)、[MCP 服务器](https://code.claude.com/docs/en/mcp)、[技能](https://code.claude.com/docs/en/skills)、[子代理](https://code.claude.com/docs/en/sub-agents)
 
 ### Hooks 系统（28 种生命周期事件）
 
@@ -454,6 +460,8 @@ ANTHROPIC_DEFAULT_SONNET_MODEL_NAME="自定义名称"
 
 这一层是架构师的领域。核心是"让多个 AI 协作完成复杂任务"。
 
+> 推荐阅读：[代理团队](https://code.claude.com/docs/en/agent-teams)、[企业部署](https://code.claude.com/docs/en/admin-setup)、[服务器管理设置](https://code.claude.com/docs/en/server-managed-settings)
+
 ### Agent Teams 多智能体编排
 
 ```bash
@@ -645,6 +653,8 @@ claude -p --output-format stream-json --include-hook-events --include-partial-me
 
 这一层没有上限。核心是"让 AI 自主运行，人类只在关键节点介入"。
 
+> 推荐阅读：[环境变量](https://code.claude.com/docs/en/env-vars)、[无头模式](https://code.claude.com/docs/en/headless)、[Prompt 缓存](https://code.claude.com/docs/en/prompt-caching)、[上下文窗口](https://code.claude.com/docs/en/context-window)
+
 ### 多 Workflow 串联
 
 跨会话状态管理，实现完整软件生命周期自动化：
@@ -798,8 +808,38 @@ Cron（每小时扫描 GitHub Issues）
 
 ---
 
-## 数据来源
+## 数据来源与推荐阅读
 
-- [Claude Code 官方文档](https://code.claude.com/docs)
+### 官方文档
+
+- [Claude Code 文档首页](https://code.claude.com/docs) — 总入口
+- [概述](https://code.claude.com/docs/en/overview) — 安装方法、平台支持、功能全景
+- [CLI 参考](https://code.claude.com/docs/en/cli-reference) — 全部命令和标志
+- [设置](https://code.claude.com/docs/en/settings) — settings.json 完整 schema、优先级、权限规则
+- [记忆](https://code.claude.com/docs/en/memory) — CLAUDE.md 层级、Rules、自动记忆
+- [钩子](https://code.claude.com/docs/en/hooks) — 28 种事件、5 种处理程序、匹配器语法
+- [MCP 服务器](https://code.claude.com/docs/en/mcp) — 传输类型、作用域、管理命令
+- [技能](https://code.claude.com/docs/en/skills) — SKILL.md frontmatter、动态注入、捆绑列表
+- [子代理](https://code.claude.com/docs/en/sub-agents) — 内置类型、自定义定义、frontmatter 字段
+- [权限](https://code.claude.com/docs/en/permissions) — 六种模式、规则语法、沙盒
+- [企业部署](https://code.claude.com/docs/en/admin-setup) — MDM、托管设置、策略分发
+- [服务器管理设置](https://code.claude.com/docs/en/server-managed-settings) — 远程策略、合规 API
+- [环境变量](https://code.claude.com/docs/en/env-vars) — 259 个变量完整参考
+- [命令列表](https://code.claude.com/docs/en/commands) — 70+ 个斜杠命令
+- [键绑定](https://code.claude.com/docs/en/keybindings) — 20 个上下文、和弦语法
+- [上下文窗口](https://code.claude.com/docs/en/context-window) — 加载时序、压缩后保留策略
+- [Prompt 缓存](https://code.claude.com/docs/en/prompt-caching) — 失效条件、TTL 控制
+- [模型配置](https://code.claude.com/docs/en/model-config) — 别名、回退链、努力级别
+- [故障排除](https://code.claude.com/docs/en/troubleshooting) — /doctor、/heapdump、safe-mode
+- [无头模式](https://code.claude.com/docs/en/headless) — SDK 集成、流式 JSON、结构化输出
+- [代理团队](https://code.claude.com/docs/en/agent-teams) — 多会话协调、tmux 模式
+- [GitHub Actions](https://code.claude.com/docs/en/github-actions) — CI/CD 自动化、@claude 触发
+- [网络配置](https://code.claude.com/docs/en/network-config) — 代理、mTLS、CA 证书
+- [LLM Gateway](https://code.claude.com/docs/en/llm-gateway) — API 代理、会话级成本归因
+- [数据使用](https://code.claude.com/docs/en/data-usage) — 零数据保留、合规
+- [监控使用](https://code.claude.com/docs/en/monitoring-usage) — OpenTelemetry、审计日志
+
+### 其他来源
+
 - Claude Code v2.1.173 CLI `--help` 输出
 - [Claude Code GitHub 仓库](https://github.com/anthropics/claude-code)
