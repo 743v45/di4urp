@@ -544,7 +544,132 @@ Haiku 跑"检查有无变化"这种轻量任务绰绰有余，成本只有 Opus 
 
 ---
 
-## 数据来源与推荐阅读
+## 七、会话状态泄漏——你以为的干净启动不是干净的
+
+每次 Cron 触发会加载你的 MEMORY.md 和 CLAUDE.md。这些全局上下文可能**干扰** Cron 任务的行为。
+
+### MEMORY.md 污染
+
+```
+第 1 次触发 → 分析 bug → 写 Memory："上次分析到第 3 个文件"
+第 2 次触发 → 读 Memory → 继续从第 3 个文件开始（而不是从头）
+→ 行为取决于上次的状态，不是纯函数
+```
+
+**防护**：Cron prompt 里显式声明：
+
+```
+"忽略 MEMORY.md 中与本次任务无关的内容。
+ 状态只从 ~/cron-state/ 目录读取，不从 Memory 读取。"
+```
+
+### CLAUDE.md 全局指令干扰
+
+你在全局 CLAUDE.md 里写了"所有回复用中文"。但 Cron 任务可能需要英文输出（比如写 GitHub Issue）。
+
+**防护**：在 Cron prompt 开头显式覆盖：
+
+```
+"以下任务使用英文输出。忽略全局语言设置。"
+```
+
+---
+
+## 八、并发冲突——两个任务同时改一个文件
+
+你设了两个 durable Cron：
+
+```
+Cron A (*/30)：检查 CI → 写入 ~/status.md
+Cron B (*/60)：每日审查 → 也写入 ~/status.md
+```
+
+如果它们在同一个时间点触发（比如整点），两个 Agent 可能同时 `Edit` 同一个文件。Claude Code 的文件系统操作没有锁机制。后写的覆盖先写的。
+
+**防护**：
+
+```
+方案 1：状态文件严格隔离
+  ~/cron-state/ci-watchdog/status.md
+  ~/cron-state/daily-review/status.md
+  互不干扰
+
+方案 2：永远用追加写入，不要用 Edit 修改已有内容
+  Write 新文件，不 Edit 旧文件
+```
+
+---
+
+## 九、外部服务不可用——你的依赖随时可能挂了
+
+Cron prompt 里调用了 `gh`（GitHub CLI）、`npm`、`docker`、外部 API。这些东西随时可能不可用。
+
+### GitHub API 限速
+
+```bash
+gh api rate_limit
+# 核心接口每小时 5000 次
+# 如果你有 5 个 Cron 任务都在用 gh → 100 次/小时
+# 再加上你日常手动用 gh → 可能触顶
+```
+
+### npm registry 超时
+
+```
+Cron prompt: "npm install && npm test"
+→ npm registry 维护中 → 超时 → Cron 任务挂了
+→ 下次触发又 npm install → 又超时 → 每次消耗大量 token
+```
+
+**防护**：
+
+```
+"执行外部命令时设置超时。如果 gh/npm/curl 超过 30 秒未响应，
+ 记录超时并跳过该步骤，不要重试。写入 ~/cron-state/external-timeout.md"
+```
+
+---
+
+## 十、Git 状态污染——Cron 在你的工作目录留了痕迹
+
+Cron 任务跑在你的项目目录里。如果它执行了 `git checkout`、`npm install`、文件修改，这些变更会**留在你的工作目录**。
+
+```
+Cron 任务: "分析 bug，在 worktree 里尝试修复"
+→ 忘了在 worktree 里工作 → 直接改了 main 分支的文件
+→ 你第二天上班 git status 一脸懵
+```
+
+**防护**：
+
+```
+Cron prompt 里必须包含：
+"所有文件修改必须在 worktree 隔离环境中进行。
+ 不要修改主工作目录的任何文件。
+ 如果需要修改文件，先 EnterWorktree。"
+```
+
+---
+
+## 十一、完整风险矩阵
+
+| 风险 | 严重性 | 发生概率 | 防护成本 | 防护一句话 |
+|------|--------|---------|---------|-----------|
+| 幂等性缺失 | 高 | 高 | 低 | 状态外置 + 先读再写 |
+| 递归爆炸 | 高 | 中 | 低 | 标记来源 + 日配额 |
+| 凭证泄漏 | 高 | 低 | 低 | 绝不在 prompt 写密钥 |
+| Token 失控 | 中 | 高 | 低 | prompt 内设预算上限 |
+| 并发冲突 | 中 | 中 | 低 | 状态文件隔离 |
+| 外部服务不可用 | 中 | 中 | 低 | 超时 + 跳过 |
+| Git 状态污染 | 高 | 低 | 低 | 强制 worktree |
+| MEMORY.md 污染 | 中 | 中 | 低 | prompt 显式排除 |
+| CLAUDE.md 干扰 | 低 | 高 | 低 | prompt 开头覆盖 |
+
+更多误用案例和诊断方法见 [Cron 常见误用与反模式](/posts/cron-anti-patterns/)。
+
+---
+
+## 十二、数据来源与推荐阅读
 
 - [Claude Code CronCreate 工具文档](https://code.claude.com/docs/en/cli-reference) — CLI 参考中的 Cron 相关部分
 - [Claude Code ScheduleWakeup 工具文档](https://code.claude.com/docs/en/cli-reference) — 短期回调机制
@@ -552,3 +677,4 @@ Haiku 跑"检查有无变化"这种轻量任务绰绰有余，成本只有 Opus 
 - [Claude Code Prompt 缓存](https://code.claude.com/docs/en/prompt-caching) — 理解 Cache TTL 对 Cron 成本的影响
 - [Claude Code 无头模式](https://code.claude.com/docs/en/headless) — `claude -p` 与系统 crontab 集成
 - [Claude Code /loop 新手使用手册](/posts/claude-code-loop-guide/) — 入门操作层 companion
+- [Claude Code Cron 常见误用与反模式](/posts/cron-anti-patterns/) — 12 个反面教材
