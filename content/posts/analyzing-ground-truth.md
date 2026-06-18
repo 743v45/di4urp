@@ -1,5 +1,5 @@
 +++
-title = '分析 Ground Truth：别信置信度，信证据'
+title = '🥳 分析 Ground Truth：别信置信度，信证据'
 date = 2026-06-19T04:05:00+08:00
 draft = false
 description = '不是所有 ground truth 都一样硬。如何判断一条信息的硬度？五个维度、四种陷阱、一套冲突裁决规则。'
