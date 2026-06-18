@@ -1,9 +1,0 @@
-name = "a4-paper"
-license = "MIT"
-description = "A4 paper style Hugo theme for Chinese blogs"
-homepage = "https://github.com/743v45/di4urp"
-min_version = "0.120.0"
-
-[author]
-  name = "taevas"
-  homepage = "https://github.com/743v45"
