@@ -1,6 +1,6 @@
 +++
 title = '文档驱动：AI 工程最靠谱的路'
-date = 2026-06-19T22:00:00+08:00
+date = 2026-06-19T03:47:00+08:00
 draft = false
 description = '把不确定性从模型脑内挪到外部可验证的文档里——这是与大语言模型协作做工程的最佳实践。'
 tags = ['AI', 'engineering', 'methodology', 'documentation']
