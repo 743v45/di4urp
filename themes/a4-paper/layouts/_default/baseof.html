@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body>
+  {{ block "main" . }}{{ end }}
+
+  <script>
+  (function() {
+    var root = document.documentElement;
+    var stored = localStorage.getItem('dark-mode');
+    if (stored === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+    } else if (stored === 'light') {
+      root.setAttribute('data-theme', 'light');
+    }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.dark-toggle')) return;
+      var current = root.getAttribute('data-theme');
+      if (current === 'dark') {
+        root.setAttribute('data-theme', 'light');
+        localStorage.setItem('dark-mode', 'light');
+      } else {
+        root.setAttribute('data-theme', 'dark');
+        localStorage.setItem('dark-mode', 'dark');
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

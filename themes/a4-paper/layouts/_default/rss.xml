@@ -1,0 +1,29 @@
+{{- /* Hugo default RSS template */ -}}
+{{- $pages := .Pages -}}
+{{- if not $pages -}}
+  {{- $pages = where site.RegularPages "Type" "in" site.Params.mainSections -}}
+{{- end -}}
+{{- printf `<?xml version="1.0" encoding="utf-8"?>` | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ .Title }} on {{ .Site.Title }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>{{ .Site.Params.description }}</description>
+    <generator>Hugo</generator>
+    <language>{{ .Site.LanguageCode }}</language>
+    <managingEditor>{{ .Site.Params.authorEmail }} ({{ .Site.Params.author }})</managingEditor>
+    <webMaster>{{ .Site.Params.authorEmail }} ({{ .Site.Params.author }})</webMaster>
+    <lastBuildDate>{{ now.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</lastBuildDate>
+    {{ with .Site.Copyright }}<copyright>{{ . }}</copyright>{{ end }}
+    <atom:link href="{{ .Permalink }}" rel="self" type="application/rss+xml" />
+    {{ range first 15 $pages }}
+    <item>
+      <title>{{ .Title }}</title>
+      <link>{{ .Permalink }}</link>
+      <pubDate>{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>
+      <guid>{{ .Permalink }}</guid>
+      <description>{{ .Summary | html }}</description>
+    </item>
+    {{ end }}
+  </channel>
+</rss>

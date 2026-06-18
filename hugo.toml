@@ -1,7 +1,7 @@
 baseURL = 'di4urp.github.io'
 languageCode = 'zh-cn'
 title = 'Tao'
-theme = 'hugo-texify3'
+theme = 'a4-paper'
 
 [params]
 author = "taevas"
