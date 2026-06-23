@@ -5,7 +5,7 @@ theme = 'hugo-texify3'
 
 [params]
 author = "taevas"
-description = "A personal blog built with Hugo"
+description = "taevas 的个人技术博客，聚焦 AI 工程、Claude Code、浏览器自动化与学习方法论。"
 authorEmail = "di4urp@gmail.com"  # 可选，用于 RSS feed
 
 [taxonomies]
