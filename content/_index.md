@@ -16,7 +16,7 @@
 
 - [lucent](https://github.com/743v45/lucent) — AI Agent API 透明代理，全量记录与可视化，你的上下文好伙伴
 - [taevas-plugins](https://github.com/743v45/taevas-plugins) — 自建 Claude Code 插件集合，包含 Hugo 博客发布等工具
-- [anti-anti-crawler-skill-tree](https://github.com/743v45/anti-anti-crawler-skill-tree) — 反反爬虫技术全景：技能树与实战指南（180KB 长文）
+- [反反爬虫技术全景](posts/anti-anti-crawler-skill-tree/) — 技能树与实战指南，180KB 长文
 
 ---
 
